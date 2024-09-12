@@ -8,6 +8,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    const float EPSILON = 0.001;
 
     struct Circle{
         float
@@ -57,7 +58,6 @@ public:
 
     QList<Circle> circles;
     QList<Ellipse> ellipses;
-    QList<Rectangle> rectangles;
     QList<Line> lines;
     QList<Arc> arcs;
 
@@ -70,5 +70,7 @@ public:
     void writeSvg();
     Point transformPoint(Point &p, float matrix[3][3]);
     Line transformLine(Line &l, float matrix[3][3]);
+    void killoverlap(QList<Line> &lines);
+    bool areEqual(float &a, float &b);
 };
 #endif // MAINWINDOW_H

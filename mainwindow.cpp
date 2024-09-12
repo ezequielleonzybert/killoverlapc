@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     readSvg();
+    killoverlap(lines);
     writeSvg();
 }
 
@@ -60,10 +61,9 @@ void MainWindow::readSvg()
                 r.h = a.value("height").toFloat();
                 if(a.hasAttribute("transform"))
                     r.rot = regex.match(a.value("transform")).captured(1).toFloat();
-                rectangles.append(r);
 
                 float matrix[3][3];
-                float angle = r.rot * M_PI / 180; // Convertir grados a radianes
+                float angle = r.rot * M_PI / 180;
 
                 matrix[0][0] = cos(angle);
                 matrix[0][1] = -sin(angle);
@@ -313,4 +313,25 @@ MainWindow::Line MainWindow::transformLine(Line &l, float matrix[3][3]){
     result.a = transformPoint(l.a, matrix);
     result.b = transformPoint(l.b, matrix);
     return result;
+}
+
+bool MainWindow::areEqual(float &a, float &b){
+    return abs(a-b) < EPSILON;
+}
+
+void MainWindow::killoverlap(QList<Line> &lines)
+{
+    int counter = 0;
+    for(int i = 0; i < lines.size(); i++){
+        float m1 = (lines[i].b.y - lines[i].a.y) / ((lines[i].b.x - lines[i].a.x));
+        float b1 = lines[i].a.y - m1 * lines[i].a.x;
+        for(int j = i + 1; j < lines.size(); j++){
+            float m2 = (lines[j].b.y - lines[j].a.y) / ((lines[j].b.x - lines[j].a.x));
+            float b2 = lines[j].a.y - m2 * lines[j].a.x;
+            if(areEqual(m1, m2) && areEqual(b1, b2)){
+                counter ++;
+            }
+        }
+    }
+    qDebug() << counter;
 }

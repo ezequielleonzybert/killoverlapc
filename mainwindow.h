@@ -21,7 +21,7 @@ public:
             y,
             rx,
             ry,
-            rot;
+            rot = 0;
     };
     struct Rectangle{
         float
@@ -29,7 +29,7 @@ public:
             y,
             w,
             h,
-            rot;
+            rot = 0;
     };
     struct Point{
         float x, y;
@@ -41,7 +41,7 @@ public:
         float
             rx,
             ry,
-            rot;
+            rot = 0;
         int
             large,
             sweep;
@@ -67,5 +67,7 @@ public:
     ~MainWindow();
     void readSvg();
     void writeSvg();
+    Point transformPoint(Point &p, float matrix[3][3]);
+    Line transformLine(Line &l, float matrix[3][3]);
 };
 #endif // MAINWINDOW_H

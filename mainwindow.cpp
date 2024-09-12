@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
     readSvg();
     writeSvg();
-    qDebug() << lines.size();
 }
 
 MainWindow::~MainWindow() {}
@@ -20,27 +19,27 @@ void MainWindow::readSvg()
 {
     QFile file(R"(../../test.svg)");
     file.open(QIODeviceBase::ReadOnly);
-    QXmlStreamReader xml(&file);
+    QXmlStreamReader xmlReader(&file);
     QXmlStreamAttributes a;
     static QRegularExpression regex(R"(rotate\(([^)]*)\))");
 
-    while(!xml.atEnd()){
-        xml.readNext();
-        if (xml.tokenType() == QXmlStreamReader::StartElement){
-            if(xml.name().toString() == "svg"){
-                width = xml.attributes().value("width").toString();
-                height = xml.attributes().value("height").toString();
+    while(!xmlReader.atEnd()){
+        xmlReader.readNext();
+        if (xmlReader.tokenType() == QXmlStreamReader::StartElement){
+            if(xmlReader.name().toString() == "svg"){
+                width = xmlReader.attributes().value("width").toString();
+                height = xmlReader.attributes().value("height").toString();
             }
-            if(xml.name().toString() == "circle"){
-                a = xml.attributes();
+            if(xmlReader.name().toString() == "circle"){
+                a = xmlReader.attributes();
                 Circle c;
                 c.x = a.value("cx").toFloat();
                 c.y = a.value("cy").toFloat();
                 c.r = a.value("r").toFloat();
                 circles.append(c);
             }
-            else if(xml.name().toString() == "ellipse"){
-                a = xml.attributes();
+            else if(xmlReader.name().toString() == "ellipse"){
+                a = xmlReader.attributes();
                 Ellipse e;
                 e.x = a.value("cx").toFloat();
                 e.y = a.value("cy").toFloat();
@@ -50,8 +49,8 @@ void MainWindow::readSvg()
                     e.rot = regex.match(a.value("transform")).captured(1).toFloat();
                 ellipses.append(e);
             }
-            else if(xml.name().toString() == "rect"){
-                a = xml.attributes();
+            else if(xmlReader.name().toString() == "rect"){
+                a = xmlReader.attributes();
                 Rectangle r;
                 r.x = a.value("x").toFloat();
                 r.y = a.value("y").toFloat();
@@ -60,9 +59,36 @@ void MainWindow::readSvg()
                 if(a.hasAttribute("transform"))
                     r.rot = regex.match(a.value("transform")).captured(1).toFloat();
                 rectangles.append(r);
+
+                float matrix[3][3];
+                float angle = r.rot * M_PI / 180; // Convertir grados a radianes
+
+                matrix[0][0] = cos(angle);
+                matrix[0][1] = -sin(angle);
+                matrix[0][2] = 0;
+                matrix[1][0] = sin(angle);
+                matrix[1][1] = cos(angle);
+                matrix[1][2] = 0;
+                matrix[2][0] = 0;
+                matrix[2][1] = 0;
+                matrix[2][2] = 1;
+
+                Line l;
+                l.a = {r.x, r.y};
+                l.b = {r.x + r.w, r.y};
+                lines.append(transformLine(l, matrix));
+                l.a = {r.x + r.w, r.y};
+                l.b = {r.x + r.w, r.y + r.h};
+                lines.append(transformLine(l, matrix));
+                l.a = {r.x + r.w, r.y + r.h};
+                l.b = {r.x, r.y + r.h};
+                lines.append(transformLine(l, matrix));
+                l.a = {r.x, r.y + r.h};
+                l.b = {r.x, r.y};
+                lines.append(transformLine(l, matrix));
             }
-            else if(xml.name().toString() == "path"){
-                QString pathCode = xml.attributes().value("d").toString();
+            else if(xmlReader.name().toString() == "path"){
+                QString pathCode = xmlReader.attributes().value("d").toString();
                 static QRegularExpression regexSplit(R"(\s+|,+)");
                 QStringList pathCodeSplit = pathCode.split(regexSplit);
                 QChar command;
@@ -247,4 +273,18 @@ void MainWindow::writeSvg()
     }
 
     xmlWriter.writeEndElement();
+}
+
+MainWindow::Point MainWindow::transformPoint(Point &p, float matrix[3][3]){
+    Point result;
+    result.x = p.x * matrix[0][0] + p.y * matrix[0][1] + matrix[0][2];
+    result.y = p.x * matrix[1][0] + p.y * matrix[1][1] + matrix[1][2];
+    return result;
+}
+
+MainWindow::Line MainWindow::transformLine(Line &l, float matrix[3][3]){
+    Line result;
+    result.a = transformPoint(l.a, matrix);
+    result.b = transformPoint(l.b, matrix);
+    return result;
 }

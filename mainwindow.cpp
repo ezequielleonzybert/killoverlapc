@@ -36,6 +36,8 @@ void MainWindow::readSvg()
                 c.x = a.value("cx").toFloat();
                 c.y = a.value("cy").toFloat();
                 c.r = a.value("r").toFloat();
+                if(a.hasAttribute("transform"))
+                    c.rot = regex.match(a.value("transform")).captured(1).toFloat();
                 circles.append(c);
             }
             else if(xmlReader.name().toString() == "ellipse"){
@@ -254,6 +256,7 @@ void MainWindow::writeSvg()
         xmlWriter.writeAttribute("y2", QString::number(l.b.y));
         xmlWriter.writeEndElement();
     }
+
     for(Arc &a : arcs){
         xmlWriter.writeStartElement("path");
         QString pathCode =
@@ -272,6 +275,29 @@ void MainWindow::writeSvg()
         xmlWriter.writeEndElement();
     }
 
+    for(Ellipse &e : ellipses){
+        xmlWriter.writeStartElement(("ellipse"));
+        xmlWriter.writeAttribute("cx", QString::number(e.x));
+        xmlWriter.writeAttribute("cy", QString::number(e.y));
+        xmlWriter.writeAttribute("rx", QString::number(e.rx));
+        xmlWriter.writeAttribute("ry", QString::number(e.ry));
+        if(e.rot){
+            xmlWriter.writeAttribute("transform", "rotate(" + QString::number(e.rot) + ")");
+        }
+        xmlWriter.writeEndElement();
+    }
+
+    for(Circle &c : circles){
+        xmlWriter.writeStartElement(("circle"));
+        xmlWriter.writeAttribute("cx", QString::number(c.x));
+        xmlWriter.writeAttribute("cy", QString::number(c.y));
+        xmlWriter.writeAttribute("r", QString::number(c.r));
+        if(c.rot){
+            xmlWriter.writeAttribute("transform", "rotate(" + QString::number(c.rot) + ")");
+        }
+        xmlWriter.writeEndElement();
+
+    }
     xmlWriter.writeEndElement();
 }
 

@@ -13,7 +13,8 @@ public:
         float
             x,
             y,
-            r;
+            r,
+            rot;
     };
     struct Ellipse{
         float

@@ -1,0 +1,9 @@
+# ninja log v6
+14	918	7479408260372204	killoverlap_autogen/timestamp	ca2e80e801dbb507
+14	918	7479408260372204	killoverlap_autogen/mocs_compilation.cpp	ca2e80e801dbb507
+14	918	7479408260372204	C:/Users/Ezequiel/Documents/qt/killoverlap/build/Desktop_Qt_6_7_2_MinGW_64_bit-Release/killoverlap_autogen/timestamp	ca2e80e801dbb507
+14	918	7479408260372204	C:/Users/Ezequiel/Documents/qt/killoverlap/build/Desktop_Qt_6_7_2_MinGW_64_bit-Release/killoverlap_autogen/mocs_compilation.cpp	ca2e80e801dbb507
+926	3393	7479408261391937	CMakeFiles/killoverlap.dir/killoverlap_autogen/mocs_compilation.cpp.obj	fb7df3d917d769fc
+930	3445	7479408261441925	CMakeFiles/killoverlap.dir/main.cpp.obj	a6e4dce5c3eb3bfc
+934	5719	7479408261481916	CMakeFiles/killoverlap.dir/mainwindow.cpp.obj	a040efd7bda035e4
+5720	5937	7479408309336238	killoverlap.exe	51c7310ef6e412ff

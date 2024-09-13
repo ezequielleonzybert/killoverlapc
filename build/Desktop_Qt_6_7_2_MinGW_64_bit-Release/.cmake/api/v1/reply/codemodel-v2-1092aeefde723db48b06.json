@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Release-7bfbdd45d92aade3208b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "killoverlap",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "killoverlap::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-killoverlap-Release-7d4c3adc73c672de9753.json",
+					"name" : "killoverlap",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "killoverlap_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-killoverlap_autogen-Release-8d09427e6a0bd5d9de14.json",
+					"name" : "killoverlap_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "killoverlap_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-killoverlap_autogen_timestamp_deps-Release-8d6b62c1f9483a282bca.json",
+					"name" : "killoverlap_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Ezequiel/Documents/qt/killoverlap/build/Desktop_Qt_6_7_2_MinGW_64_bit-Release",
+		"source" : "C:/Users/Ezequiel/Documents/qt/killoverlap"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

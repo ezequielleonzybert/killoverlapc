@@ -66,8 +66,12 @@ public:
 
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void readSvg();
-    void writeSvg();
+
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+
+    void readSvg(QString filePath);
+    void writeSvg(QString outPath);
     Point transformPoint(Point &p, float matrix[3][3]);
     Line transformLine(Line &l, float matrix[3][3]);
     void killoverlap(QList<Line> &lines);

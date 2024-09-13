@@ -5,20 +5,57 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamWriter>
 #include <QRegularExpression>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
+#include <QLabel>
+#include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    readSvg();
-    killoverlap(lines);
-    writeSvg();
+    resize(400,300);
+    setAcceptDrops(true);
+
+    QLabel *label = new QLabel("Drop the SVG files here", this);
+    label->setAlignment(Qt::AlignCenter);
+
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(label);
+
+    QWidget *centralWidget = new QWidget(this);
+    centralWidget->setLayout(layout);
+    setCentralWidget(centralWidget);
+
 }
 
 MainWindow::~MainWindow() {}
 
-void MainWindow::readSvg()
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
-    QFile file(R"(../../test.svg)");
+    if (event->mimeData()->hasUrls()) {
+        event->acceptProposedAction();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    foreach (const QUrl &url, event->mimeData()->urls()) {
+        QString filePath = url.toLocalFile();
+        readSvg(filePath);
+        killoverlap(lines);
+        QString outPath = filePath.split(".")[0] + "(KO).svg";
+        writeSvg(outPath);
+        circles.clear();
+        ellipses.clear();
+        arcs.clear();
+        lines.clear();
+    }
+}
+
+void MainWindow::readSvg(QString filePath)
+{
+    QFile file(filePath);
     file.open(QIODeviceBase::ReadOnly);
     QXmlStreamReader xmlReader(&file);
     QXmlStreamAttributes a;
@@ -237,9 +274,9 @@ void MainWindow::readSvg()
     }
 }
 
-void MainWindow::writeSvg()
+void MainWindow::writeSvg(QString outPath)
 {
-    QFile file("C:/Users/Ezequiel/Desktop/output.svg");
+    QFile file(outPath);
     file.open(QIODeviceBase::WriteOnly);
     QXmlStreamWriter xmlWriter(&file);
 
@@ -347,7 +384,7 @@ void MainWindow::killoverlap(QList<Line> &lines)
             }
         }
     }
-    qDebug() << counter;
+    qDebug() << "Overlaps found: " << counter;
 }
 
 bool MainWindow::overlappingLines(Line &l1, Line &l2) {

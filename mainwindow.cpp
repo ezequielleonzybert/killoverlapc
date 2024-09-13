@@ -104,6 +104,15 @@ void MainWindow::readSvg()
                 while (i < pathCodeSplit.size()) {
                     if (pathCodeSplit[i].size() == 1 && QString("mMaAlLzZ").contains(pathCodeSplit[i][0])) {
                         command = pathCodeSplit[i][0];
+                        if(command == 'm' || command == 'M'){
+                            for(int j = 0; j < points.size() - 1; j++){
+                                Line l;
+                                l.a = points[j];
+                                l.b = points[j+1];
+                                lines.append(l);
+                            }
+                            points.clear();
+                        }
                         i++;
                     }
                     if(command == 'm' || command == 'l'){
@@ -170,8 +179,6 @@ void MainWindow::readSvg()
                                 lines.append(l);
                             }
                             points.clear();
-                            //THIS IS WRONG, CAN't CLEAR POINTS BEFORE Z
-                            //because z command create another line that needs the point 0 of a path
                         }
 
                         Arc a;
@@ -329,9 +336,32 @@ void MainWindow::killoverlap(QList<Line> &lines)
             float m2 = (lines[j].b.y - lines[j].a.y) / ((lines[j].b.x - lines[j].a.x));
             float b2 = lines[j].a.y - m2 * lines[j].a.x;
             if(areEqual(m1, m2) && areEqual(b1, b2)){
-                counter ++;
+                if(overlappingLines(lines[i], lines[j])){
+                    counter++;
+                    std::pair ends = overlappingEnds(lines[i].a,lines[i].b, lines[j].a, lines[j].b);
+                    Line l = Line{ends.first, ends.second};
+                    lines.remove(j);
+                    lines.remove(i);
+                    lines.append(l);
+                }
             }
         }
     }
     qDebug() << counter;
+}
+
+bool MainWindow::overlappingLines(Line &l1, Line &l2) {
+    return std::max(l1.a.x, l1.b.x) >= std::min(l2.a.x, l2.b.x) &&
+           std::max(l2.a.x, l2.b.x) >= std::min(l1.a.x, l1.b.x);
+}
+
+std::pair<MainWindow::Point, MainWindow::Point> MainWindow::overlappingEnds(const Point& p1, const Point& p2, const Point& p3, const Point& p4) {
+    auto comparar = [](const Point& a, const Point& b) {
+        return (a.x < b.x) || (a.x == b.x && a.y < b.y);
+    };
+
+    const Point& min_p = std::min({p1, p2, p3, p4}, comparar);
+    const Point& max_p = std::max({p1, p2, p3, p4}, comparar);
+
+    return {min_p, max_p};
 }

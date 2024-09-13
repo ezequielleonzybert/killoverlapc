@@ -72,5 +72,7 @@ public:
     Line transformLine(Line &l, float matrix[3][3]);
     void killoverlap(QList<Line> &lines);
     bool areEqual(float &a, float &b);
+    bool overlappingLines(Line &l1, Line &l2);
+    std::pair<Point, Point> overlappingEnds(const Point &p1, const Point &p2, const Point &p3, const Point &p4);
 };
 #endif // MAINWINDOW_H
